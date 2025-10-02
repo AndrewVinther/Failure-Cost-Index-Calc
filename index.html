@@ -1,116 +1,81 @@
 <!DOCTYPE html>
-<!-- saved from url=(0071)file:///C:/Users/amv/Downloads/failure_cost_index.html -->
-<html><head><meta http-equiv="Content-Type" content="text/html; charset=windows-1252">
-    <title>Failure Cost Index Calculator</title>
-    <script src="./Failure Cost Index Calculator_files/firebase-app.js.download"></script>
-    <script src="./Failure Cost Index Calculator_files/firebase-database.js.download"></script>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Failure Cost Index Calculator</title>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    h2 { margin-top: 40px; }
+    .section { border: 1px solid #ccc; padding: 15px; margin-bottom: 20px; border-radius: 8px; }
+    label { display: block; margin-top: 10px; }
+    input[type="number"] { width: 100px; }
+    .result { font-weight: bold; margin-top: 10px; }
+  </style>
 </head>
 <body>
-    <h1>Failure Cost Index Calculator</h1>
+  <h1>Failure Cost Index Calculator</h1>
 
-    <div id="calculator"><div>
-                <h2>China</h2>
-                <label>Hourly Wage: <input type="number" id="China-wage"></label><br>
-                <label>Multiplying Factor: <input type="number" id="China-factor"></label><br>
-                <label>Workdays in Month: <input type="number" id="China-days"></label><br>
-                <strong>Failure Cost: <span id="China-result">0</span></strong>
-                <hr>
-            </div><div>
-                <h2>USA</h2>
-                <label>Hourly Wage: <input type="number" id="USA-wage"></label><br>
-                <label>Multiplying Factor: <input type="number" id="USA-factor"></label><br>
-                <label>Workdays in Month: <input type="number" id="USA-days"></label><br>
-                <strong>Failure Cost: <span id="USA-result">0</span></strong>
-                <hr>
-            </div><div>
-                <h2>Denmark</h2>
-                <label>Hourly Wage: <input type="number" id="Denmark-wage"></label><br>
-                <label>Multiplying Factor: <input type="number" id="Denmark-factor"></label><br>
-                <label>Workdays in Month: <input type="number" id="Denmark-days"></label><br>
-                <strong>Failure Cost: <span id="Denmark-result">0</span></strong>
-                <hr>
-            </div><div>
-                <h2>Thailand</h2>
-                <label>Hourly Wage: <input type="number" id="Thailand-wage"></label><br>
-                <label>Multiplying Factor: <input type="number" id="Thailand-factor"></label><br>
-                <label>Workdays in Month: <input type="number" id="Thailand-days"></label><br>
-                <strong>Failure Cost: <span id="Thailand-result">0</span></strong>
-                <hr>
-            </div><div>
-                <h2>Slovakia</h2>
-                <label>Hourly Wage: <input type="number" id="Slovakia-wage"></label><br>
-                <label>Multiplying Factor: <input type="number" id="Slovakia-factor"></label><br>
-                <label>Workdays in Month: <input type="number" id="Slovakia-days"></label><br>
-                <strong>Failure Cost: <span id="Slovakia-result">0</span></strong>
-                <hr>
-            </div></div>
+  <div id="calculator"></div>
 
-    <script>
-        // Firebase configuration
-        var firebaseConfig = {
-            apiKey: "YOUR_API_KEY",
-            authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-            databaseURL: "https://YOUR_PROJECT_ID.firebaseio.com",
-            projectId: "YOUR_PROJECT_ID",
-            storageBucket: "YOUR_PROJECT_ID.appspot.com",
-            messagingSenderId: "YOUR_SENDER_ID",
-            appId: "YOUR_APP_ID"
-        };
-        firebase.initializeApp(firebaseConfig);
-        var db = firebase.database();
+  <script>
+    var firebaseConfig = {
+      apiKey: "AIzaSyAWjw0Z2dvJ1NoKfKKuY2cdb4cfTAdXXRs",
+      authDomain: "failure-cost-index.firebaseapp.com",
+      databaseURL: "https://failure-cost-index-default-rtdb.europe-west1.firebasedatabase.app",
+      projectId: "failure-cost-index",
+      storageBucket: "failure-cost-index.firebasestorage.app",
+      messagingSenderId: "707480339831",
+      appId: "1:707480339831:web:ffc8d8ed3fc9ce16ce4d72",
+      measurementId: "G-X9LSQPTNGQ"
+    };
+    firebase.initializeApp(firebaseConfig);
+    var db = firebase.database();
 
-        const sectors = ["China", "USA", "Denmark", "Thailand", "Slovakia"];
-        const container = document.getElementById("calculator");
+    const sectors = ["China", "USA", "Denmark", "Thailand", "Slovakia"];
+    const container = document.getElementById("calculator");
 
-        sectors.forEach(sector => {
-            const section = document.createElement("div");
-            section.innerHTML = `
-                <h2>${sector}</h2>
-                <label>Hourly Wage: <input type="number" id="${sector}-wage"></label><br>
-                <label>Multiplying Factor: <input type="number" id="${sector}-factor"></label><br>
-                <label>Workdays in Month: <input type="number" id="${sector}-days"></label><br>
-                <strong>Failure Cost: <span id="${sector}-result">0</span></strong>
-                <hr>
-            `;
-            container.appendChild(section);
+    sectors.forEach(sector => {
+      const div = document.createElement("div");
+      div.className = "section";
+      div.innerHTML = `
+        <h2>${sector}</h2>
+        <label>Set Hourly Wage: <input type="number" id="${sector}-wage" /></label>
+        <label>Multiplying Factor: <input type="number" id="${sector}-factor" /></label>
+        <label>Workdays in Month: <input type="number" id="${sector}-days" /></label>
+        <div class="result" id="${sector}-result">Result: </div>
+      `;
+      container.appendChild(div);
 
-            // Load saved data
-            db.ref(sector).once("value").then(snapshot => {
-                const data = snapshot.val();
-                if (data) {
-                    document.getElementById(`${sector}-wage`).value = data.wage;
-                    document.getElementById(`${sector}-factor`).value = data.factor;
-                    document.getElementById(`${sector}-days`).value = data.days;
-                    calculate(sector);
-                }
-            });
+      const wageInput = div.querySelector(`#${sector}-wage`);
+      const factorInput = div.querySelector(`#${sector}-factor`);
+      const daysInput = div.querySelector(`#${sector}-days`);
+      const resultDiv = div.querySelector(`#${sector}-result`);
 
-            // Add event listeners
-            ["wage", "factor", "days"].forEach(field => {
-                document.getElementById(`${sector}-${field}`).addEventListener("input", () => {
-                    calculate(sector);
-                    saveData(sector);
-                });
-            });
-        });
+      function calculateAndSave() {
+        const wage = parseFloat(wageInput.value) || 0;
+        const factor = parseFloat(factorInput.value) || 0;
+        const days = parseFloat(daysInput.value) || 1;
+        const result = (wage * factor) / days;
+        resultDiv.textContent = "Result: " + result.toFixed(2);
+        db.ref("sectors/" + sector).set({ wage, factor, days });
+      }
 
-        function calculate(sector) {
-            const wage = parseFloat(document.getElementById(`${sector}-wage`).value) || 0;
-            const factor = parseFloat(document.getElementById(`${sector}-factor`).value) || 0;
-            const days = parseFloat(document.getElementById(`${sector}-days`).value) || 1;
-            const result = (wage * factor) / days;
-            document.getElementById(`${sector}-result`).innerText = result.toFixed(2);
+      [wageInput, factorInput, daysInput].forEach(input => {
+        input.addEventListener("input", calculateAndSave);
+      });
+
+      db.ref("sectors/" + sector).once("value").then(snapshot => {
+        const data = snapshot.val();
+        if (data) {
+          wageInput.value = data.wage;
+          factorInput.value = data.factor;
+          daysInput.value = data.days;
+          calculateAndSave();
         }
-
-        function saveData(sector) {
-            const data = {
-                wage: parseFloat(document.getElementById(`${sector}-wage`).value) || 0,
-                factor: parseFloat(document.getElementById(`${sector}-factor`).value) || 0,
-                days: parseFloat(document.getElementById(`${sector}-days`).value) || 1
-            };
-            db.ref(sector).set(data);
-        }
-    </script>
-
-
-</body></html>
+      });
+    });
+  </script>
+</body>
+</html>
