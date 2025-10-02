@@ -41,7 +41,7 @@
       div.className = "section";
       div.innerHTML = `
         <h2>${sector}</h2>
-        <label>Set Hourly Wage: <input type="number" id="${sector}-wage" /></label>
+        <label>Set Hourly Wage(€): <input type="number" id="${sector}-wage" /></label>
         <label>Multiplying Factor: <input type="number" id="${sector}-factor" /></label>
         <label>Workdays in Month: <input type="number" id="${sector}-days" /></label>
         <div class="result" id="${sector}-result">Result: </div>
@@ -58,7 +58,7 @@
         const factor = parseFloat(factorInput.value) || 0;
         const days = parseFloat(daysInput.value) || 1;
         const result = (wage * factor) / days;
-        resultDiv.textContent = "Result: " + result.toFixed(2);
+        resultDiv.textContent = "Result: " + result.toFixed(2) + " €";
         db.ref("sectors/" + sector).set({ wage, factor, days });
       }
 
