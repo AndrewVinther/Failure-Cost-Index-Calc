@@ -44,7 +44,7 @@
         <label>Set Monthly Salary(€): <input type="number" id="${sector}-wage" /></label>
         <label>Multiplying Factor: <input type="number" id="${sector}-factor" /></label>
         <label>Workdays in Month: <input type="number" id="${sector}-days" /></label>
-        <div class="result" id="${sector}-Failure cost">Failure cost: </div>
+        <div class="result" id="${sector}-result">Result: </div>
       `;
       container.appendChild(div);
 
@@ -58,7 +58,7 @@
         const factor = parseFloat(factorInput.value) || 0;
         const days = parseFloat(daysInput.value) || 1;
         const result = (wage * factor) / days;
-        resultDiv.textContent = "Result: " + result.toFixed(2) + " €";
+        resultDiv.textContent = "Failure cost: " + result.toFixed(2) + " €";
         db.ref("sectors/" + sector).set({ wage, factor, days });
       }
 
