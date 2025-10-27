@@ -28,7 +28,7 @@ function createSection(country) {
         <label>Multiplying Factor: <input type="number" class="factor" step="0.1" /></label><br>
         <label>Workdays in Month: <input type="number" class="workdays" /></label><br>
         <label>Hours per Day: <input type="number" class="hours" /></label><br>
-        <p>Failure cost: <span class="result">0</span> €</p>
+        <p>Failure cost (hourly): <span class="result">0</span> €</p>
     `;
     return div;
 }
@@ -41,6 +41,7 @@ function calculateFailureCost(section) {
     const resultEl = section.querySelector(".result");
 
     if (salary > 0 && workdays > 0 && hours > 0) {
+        // Hourly wage calculation
         const hourlyWage = salary / (workdays * hours);
         const failureCost = (hourlyWage * factor).toFixed(2);
         resultEl.textContent = failureCost;
@@ -61,4 +62,3 @@ countries.forEach(country => {
 </script>
 </body>
 </html>
-
